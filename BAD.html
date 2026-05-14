@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгоритм БАВ · Педиатрическая кардиология</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F8F9FA;
+            color: #2C3E50;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2C3E50;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7F8C8D;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #2C3E50;
+            margin: 25px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #BDC3C7;
+            font-size: 1.2em;
+        }
+
+        .step-box {
+            background: #FFFFFF;
+            border: 1px solid #DEE2E6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        label {
+            display: block;
+            margin: 6px 0;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+
+        label:hover { color: #2E86C1; }
+
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #BDC3C7;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #FFFFFF;
+            margin-top: 8px;
+        }
+
+        .radio-group-horizontal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .radio-group-horizontal label {
+            background: #EBF5FB;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #AED6F1;
+            transition: all 0.2s;
+        }
+
+        .radio-group-horizontal label:hover {
+            background: #D4E6F1;
+        }
+
+        .radio-group-horizontal input[type="radio"]:checked + span {
+            font-weight: bold;
+            color: #1A5276;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #2E86C1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        button:hover { background: #1A5276; }
+
+        .block-red {
+            background: #FDECEA;
+            border-left: 6px solid #E74C3C;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-yellow {
+            background: #FEF9E7;
+            border-left: 6px solid #F1C40F;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-green {
+            background: #EAFAF1;
+            border-left: 6px solid #27AE60;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-blue {
+            background: #EBF5FB;
+            border-left: 6px solid #2E86C1;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-grey {
+            background: #F4F6F6;
+            border-left: 6px solid #7F8C8D;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-warn {
+            background: #FDEDEC;
+            border-left: 6px solid #C0392B;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-ok {
+            background: #E8F8F5;
+            border-left: 6px solid #1ABC9C;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .block-red h4 { color: #C0392B; }
+        .block-yellow h4 { color: #B7950B; }
+        .block-green h4 { color: #1E8449; }
+        .block-blue h4 { color: #1A5276; }
+        .block-grey h4 { color: #566573; }
+
+        ul { margin: 10px 0 10px 20px; }
+        li { margin-bottom: 4px; }
+
+        .checklist { background: #FFF; padding: 20px; border-radius: 8px; border: 1px solid #DEE2E6; }
+        .checklist label { padding: 6px 0; border-bottom: 1px solid #F0F0F0; }
+        .checklist label:last-child { border-bottom: none; }
+
+        .disclaimer {
+            text-align: center;
+            color: #95A5A6;
+            font-size: 0.8em;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #DEE2E6;
+        }
+
+        #results { display: none; }
+
+        .divider {
+            height: 1px;
+            background: #DEE2E6;
+            margin: 25px 0;
+        }
+
+        .back-btn {
+            background: #95A5A6;
+            margin-top: 10px;
+        }
+
+        .back-btn:hover { background: #717D7E; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            h1 { font-size: 1.4em; }
+            .radio-group-horizontal { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>❤️ Алгоритм применения БАВ<br>в педиатрической кардиологии</h1>
+<p class="subtitle">
+    Интерактивный помощник к монографии Е. А. Дегтярёвой<br>
+    «Безмедикаментозные методы в лечении детей с острой и хронической
+    сердечно-сосудистой патологией», 2-е изд., 2026
+</p>
+
+<!-- ==================== ФОРМА ==================== -->
+<div id="form-section">
+
+    <!-- Шаг 1 -->
+    <div class="step-box">
+        <h2>Шаг 1. Возраст ребёнка</h2>
+        <div class="radio-group-horizontal">
+            <label><input type="radio" name="age" value="0-1"><span>До 1 года</span></label>
+            <label><input type="radio" name="age" value="1-3"><span>1–3 года</span></label>
+            <label><input type="radio" name="age" value="3-7"><span>3–7 лет</span></label>
+            <label><input type="radio" name="age" value="7-12" checked><span>7–12 лет</span></label>
+            <label><input type="radio" name="age" value="12-15"><span>12–15 лет</span></label>
+            <label><input type="radio" name="age" value="15-18"><span>15–18 лет</span></label>
+        </div>
+    </div>
+
+    <!-- Шаг 2 -->
+    <div class="step-box">
+        <h2>Шаг 2. Клиническая ситуация</h2>
+        <label><input type="radio" name="situation" value="disease"> 🔴 БОЛЕЗНЬ (острая или хроническая в стадии обострения)</label>
+        <label><input type="radio" name="situation" value="predisease"> 🟡 ПРЕДБОЛЕЗНЬ (факторы риска, предрасположение)</label>
+        <label><input type="radio" name="situation" value="rehab"> 🟢 ДОЛЕЧИВАНИЕ / РЕАБИЛИТАЦИЯ</label>
+    </div>
+
+    <!-- Шаг 3 -->
+    <div class="step-box" id="step3-box" style="display:none;">
+        <h2>Шаг 3. Оценка угрозы жизни</h2>
+        <label>
+            <input type="checkbox" id="lifeThreat">
+            ⚠️ Имеется жизнеугрожающее состояние (декомпенсация СН,
+            жизнеугрожающая аритмия, гипертонический криз, шок, тяжёлая инфекция и т. д.)
+        </label>
+    </div>
+
+    <!-- Шаг 4 -->
+    <div class="step-box">
+        <h2>Шаг 4. Основная патология</h2>
+        <select id="nosology">
+            <option value="vps-before">Врождённый порок сердца (до операции)</option>
+            <option value="vps-after">Врождённый порок сердца (после операции)</option>
+            <option value="cmp">Кардиомиопатия</option>
+            <option value="arrhythmia">Нарушения ритма и проводимости</option>
+            <option value="hypertension">Артериальная гипертензия</option>
+            <option value="vd">Вегетативная дисфункция</option>
+            <option value="obesity">Ожирение / метаболический синдром</option>
+            <option value="orvi">Частые ОРВИ на фоне кардиальной патологии</option>
+            <option value="endocarditis">Инфекционный эндокардит / миокардит</option>
+            <option value="other">Другое</option>
+        </select>
+    </div>
+
+    <!-- Шаг 5 -->
+    <div class="step-box">
+        <h2>Шаг 5. Вариант использования БАВ</h2>
+        <label><input type="checkbox" name="variant" value="v1"> (1) Основной компонент этиопатогенетической терапии</label>
+        <label><input type="checkbox" name="variant" value="v2" checked> (2) Дополнительный компонент комплексного лечения</label>
+        <label><input type="checkbox" name="variant" value="v3"> (3) Коррекция побочных эффектов фармакотерапии</label>
+        <label><input type="checkbox" name="variant" value="v4"> (4) Коррекция неустранимых неблагоприятных факторов</label>
+    </div>
+
+    <!-- Шаг 6 -->
+    <div class="step-box">
+        <h2>Шаг 6. Сопутствующая фармакотерапия</h2>
+        <label><input type="checkbox" name="drug" value="beta"> Бета-блокаторы</label>
+        <label><input type="checkbox" name="drug" value="acei"> Ингибиторы АПФ / сартаны</label>
+        <label><input type="checkbox" name="drug" value="ccb"> Блокаторы кальциевых каналов</label>
+        <label><input type="checkbox" name="drug" value="diuretic"> Диуретики</label>
+        <label><input type="checkbox" name="drug" value="digoxin"> Сердечные гликозиды (дигоксин)</label>
+        <label><input type="checkbox" name="drug" value="antiarrhythmic"> Антиаритмики (амиодарон и др.)</label>
+        <label><input type="checkbox" name="drug" value="anticoag"> Антикоагулянты (варфарин) / антиагреганты</label>
+        <label><input type="checkbox" name="drug" value="gcs"> Глюкокортикоиды</label>
+        <label><input type="checkbox" name="drug" value="antibiotics"> Антибиотики</label>
+        <label><input type="checkbox" name="drug" value="none" id="noDrugs"> Не получает фармакотерапии</label>
+    </div>
+
+    <!-- Шаг 7 -->
+    <div class="step-box">
+        <h2>Шаг 7. Занятия спортом</h2>
+        <label><input type="checkbox" id="sport"> Ребёнок занимается спортом (в т. ч. спорт высоких достижений)</label>
+    </div>
+
+    <button onclick="generateResults()">📋 Сформировать рекомендации</button>
+</div>
+
+<!-- ==================== РЕЗУЛЬТАТЫ ==================== -->
+<div id="results">
+    <div class="divider"></div>
+    <h2>📋 Результат: рекомендации по применению БАВ</h2>
+    <div id="results-content"></div>
+
+    <div class="divider"></div>
+    <h2>📝 Чек-лист документации</h2>
+    <div class="checklist">
+        <label><input type="checkbox"> Проведена клинико-анамнестическая, лабораторная и инструментальная оценка состояния</label>
+        <label><input type="checkbox"> Определена ситуационная группа (болезнь / предболезнь / реабилитация)</label>
+        <label><input type="checkbox"> Исключены жизнеугрожающие состояния, требующие неотложной конвенциональной терапии</label>
+        <label><input type="checkbox"> Проверен правовой статус назначаемого средства (регистрация, возрастные ограничения, off-label)</label>
+        <label><input type="checkbox"> Оценены потенциальные лекарственные взаимодействия с базисной терапией</label>
+        <label><input type="checkbox"> Получено информированное добровольное согласие законного представителя</label>
+        <label><input type="checkbox"> В истории болезни документировано обоснование назначения</label>
+        <label><input type="checkbox"> При отклонении от клинических рекомендаций — решение врачебной комиссии</label>
+        <label><input type="checkbox"> Определены критерии эффективности и сроки контрольной оценки</label>
+        <label><input type="checkbox"> Для спортсменов — проверено соответствие Запрещённому списку WADA</label>
+    </div>
+
+    <button class="back-btn" onclick="goBack()">← Изменить параметры</button>
+
+    <div class="disclaimer">
+        ⚕️ Данный инструмент является справочно-образовательным приложением к монографии
+        и НЕ заменяет клинического мышления врача, индивидуальной оценки пациента
+        и действующих клинических рекомендаций.<br><br>
+        © Дегтярёва Е. А., 2026
+    </div>
+</div>
+
+<script>
+// Показ/скрытие шага 3
+document.querySelectorAll('input[name="situation"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+        document.getElementById('step3-box').style.display =
+            this.value === 'disease' ? 'block' : 'none';
+    });
+});
+
+// «Не получает» — снять остальные
+document.getElementById('noDrugs').addEventListener('change', function() {
+    if (this.checked) {
+        document.querySelectorAll('input[name="drug"]').forEach(function(cb) {
+            if (cb.value !== 'none') cb.checked = false;
+        });
+    }
+});
+document.querySelectorAll('input[name="drug"]').forEach(function(cb) {
+    if (cb.value !== 'none') {
+        cb.addEventListener('change', function() {
+            if (this.checked) document.getElementById('noDrugs').checked = false;
+        });
+    }
+});
+
+function getSelectedRadio(name) {
+    var el = document.querySelector('input[name="'+name+'"]:checked');
+    return el ? el.value : null;
+}
+
+function getCheckedValues(name) {
+    var arr = [];
+    document.querySelectorAll('input[name="'+name+'"]:checked').forEach(function(cb) {
+        arr.push(cb.value);
+    });
+    return arr;
+}
+
+function generateResults() {
+    var situation = getSelectedRadio('situation');
+    if (!situation) { alert('Пожалуйста, выберите клиническую ситуацию (Шаг 2)'); return; }
+
+    var age = getSelectedRadio('age');
+    var lifeThreat = document.getElementById('lifeThreat').checked;
+    var drugs = getCheckedValues('drug');
+    var sport = document.getElementById('sport').checked;
+    var html = '';
+
+    // --- Жизнеугрожающее ---
+    if (situation === 'disease' && lifeThreat) {
+        html += '<div class="block-warn">' +
+            '<h4>🚨 ВНИМАНИЕ!</h4>' +
+            '<p>При жизнеугрожающем состоянии <b>безусловный приоритет</b> ' +
+            'принадлежит конвенциональной терапии в соответствии с ' +
+            'клиническими рекомендациями и протоколами.</p>' +
+            '<p><b>Применение БАВ в качестве основного метода лечения НЕДОПУСТИМО.</b></p>' +
+            '<p>БАВ могут рассматриваться <b>только как дополнение</b> ' +
+            '(вариант 2 или 3) после стабилизации состояния и по решению врачебной комиссии.</p>' +
+            '</div>';
+    }
+
+    // --- Ситуационная группа ---
+    if (situation === 'disease' && !lifeThreat) {
+        html += '<div class="block-red">' +
+            '<h4>🔴 Ситуационная группа: БОЛЕЗНЬ</h4>' +
+            '<p><b>Приоритет:</b> конвенциональная (медикаментозная) терапия.</p>' +
+            '<p><b>Роль БАВ:</b> строго комплементарная (дополнительная).</p>' +
+            '<p><b>Обязательные условия:</b></p>' +
+            '<ul>' +
+            '<li>Документированное обоснование патогенетического механизма ожидаемого эффекта БАВ в истории болезни</li>' +
+            '<li>Информированное добровольное согласие законного представителя</li>' +
+            '<li>Контроль лекарственных взаимодействий с базисной терапией</li>' +
+            '</ul></div>';
+    }
+
+    if (situation === 'predisease') {
+        html += '<div class="block-yellow">' +
+            '<h4>🟡 Ситуационная группа: ПРЕДБОЛЕЗНЬ</h4>' +
+            '<p><b>Приоритет:</b> БАВ и безмедикаментозные методы — ведущие.</p>' +
+            '<p><b>Фармакотерапия:</b> по строгим показаниям, при неэффективности немедикаментозных мер.</p>' +
+            '<p><b>Ключевые направления:</b></p>' +
+            '<ul>' +
+            '<li>Коррекция питания и нутритивного статуса</li>' +
+            '<li>Адаптогены, витаминно-минеральные комплексы</li>' +
+            '<li>Про- и пребиотики</li>' +
+            '<li>Кинезитерапия, закаливание</li>' +
+            '<li>Психотерапия, стресс-менеджмент</li>' +
+            '<li>Коррекция режима сна и экранного времени</li>' +
+            '</ul></div>';
+    }
+
+    if (situation === 'rehab') {
+        html += '<div class="block-green">' +
+            '<h4>🟢 Ситуационная группа: ДОЛЕЧИВАНИЕ / РЕАБИЛИТАЦИЯ</h4>' +
+            '<p><b>Приоритет:</b> БАВ и безмедикаментозные методы — основа программы.</p>' +
+            '<p><b>Фармакотерапия:</b> по показаниям, с тенденцией к постепенной минимизации.</p>' +
+            '<p><b>Ключевые направления:</b></p>' +
+            '<ul>' +
+            '<li>Иммунореабилитация (адаптогены, пробиотики, нутрицевтики)</li>' +
+            '<li>Кинезитерапия, ЛФК, дозированная физическая нагрузка</li>' +
+            '<li>Нейропсихологическая коррекция</li>' +
+            '<li>БОС-терапия, нейрофидбек</li>' +
+            '<li>Музыкотерапия, арт-терапия</li>' +
+            '<li>Анималотерапия</li>' +
+            '<li>Коррекция питания, функциональные продукты</li>' +
+            '</ul></div>';
+    }
+
+    // --- Лекарственные взаимодействия ---
+    var interactions = [];
+
+    if (drugs.includes('anticoag')) {
+        interactions.push('⚠️ <b>Варфарин / антиагреганты:</b> противопоказаны зверобой ' +
+            '(индукция CYP3A4, снижение эффекта), гинкго билоба, чеснок, имбирь, донник ' +
+            '(потенцирование антикоагулянтного эффекта, риск кровотечений). ' +
+            '<b>Контроль МНО при любых изменениях в фитотерапии!</b>');
+    }
+    if (drugs.includes('digoxin')) {
+        interactions.push('⚠️ <b>Дигоксин:</b> зверобой снижает концентрацию дигоксина ' +
+            '(индукция Р-гликопротеина). Солодка — риск гипокалиемии и потенцирования ' +
+            'токсичности. Боярышник — аддитивный инотропный эффект. ' +
+            '<b>Контроль электролитов (K⁺, Mg²⁺)!</b>');
+    }
+    if (drugs.includes('ccb')) {
+        interactions.push('⚠️ <b>Блокаторы Ca²⁺-каналов:</b> грейпфрут и его сок ' +
+            '(ингибиция CYP3A4 → повышение концентрации препарата, риск гипотензии ' +
+            'и брадикардии). <b>Исключить грейпфрут из рациона!</b>');
+    }
+    if (drugs.includes('antiarrhythmic')) {
+        interactions.push('⚠️ <b>Амиодарон:</b> зверобой (снижение концентрации через CYP3A4). ' +
+            'Солодка (гипокалиемия → проаритмогенный эффект). Грейпфрут (повышение ' +
+            'концентрации). <b>Строгий контроль электролитов, ЭКГ, QTc!</b>');
+    }
+    if (drugs.includes('diuretic')) {
+        interactions.push('⚠️ <b>Диуретики:</b> солодка (псевдоальдостеронизм → усугубление ' +
+            'гипокалиемии). Одуванчик, толокнянка, хвощ (аддитивный диуретический эффект). ' +
+            '<b>Контроль K⁺, Na⁺, Mg²⁺!</b>');
+    }
+    if (drugs.includes('gcs')) {
+        interactions.push('⚠️ <b>Глюкокортикоиды:</b> эхинацея (теоретический риск при ' +
+            'аутоиммунных состояниях). Солодка (усиление эффекта ГКС, задержка натрия). ' +
+            'Рассмотреть: витамин D, кальций, пробиотики для коррекции побочных эффектов ГКС.');
+    }
+    if (drugs.includes('beta')) {
+        interactions.push('ℹ️ <b>Бета-блокаторы:</b> боярышник (аддитивный отрицательный ' +
+            'хронотропный эффект — осторожность). Кофеинсодержащие растительные средства (антагонизм).');
+    }
+    if (drugs.includes('antibiotics')) {
+        interactions.push('ℹ️ <b>Антибиотики:</b> рассмотреть назначение пробиотиков ' +
+            '(Lactobacillus, Bifidobacterium, Saccharomyces boulardii) для профилактики ' +
+            'антибиотик-ассоциированной диареи и дисбиоза. Интервал приёма — не менее 2 ч.');
+    }
+
+    if (interactions.length > 0) {
+        html += '<div class="block-blue">' +
+            '<h4>💊 Потенциальные лекарственные взаимодействия</h4>' +
+            '<p>' + interactions.join('</p><p>') + '</p></div>';
+    }
+
+    if (drugs.includes('none')) {
+        html += '<div class="block-ok">' +
+            '✅ Пациент не получает фармакотерапии. Риск лекарственных ' +
+            'взаимодействий с БАВ минимален. Стандартные предосторожности.' +
+            '</div>';
+    }
+
+    // --- Допинг ---
+    if (sport) {
+        html += '<div class="block-grey">' +
+            '<h4>🏅 Допинг-контроль</h4>' +
+            '<p>Ребёнок занимается спортом. <b>Убедитесь</b>, что назначаемые средства:</p>' +
+            '<ul>' +
+            '<li>Не содержат субстанций из Запрещённого списка WADA (актуальная редакция)</li>' +
+            '<li>Не содержат незадекларированных компонентов (риск контаминации БАД)</li>' +
+            '<li>Имеют сертификацию для спортсменов (Informed Sport, NSF Certified for Sport, Kölner Liste®)</li>' +
+            '</ul>' +
+            '<p><b>Безмедикаментозные методы</b> (физиотерапия, кинезитерапия, психотерапия, ' +
+            'БОС-тренинги) — <b>безопасны при допинг-контроле</b>.</p></div>';
+    }
+
+    // --- Возраст ---
+    var ageNotes = {
+        '0-1': '<b>👶 До 1 года.</b> Большинство фитопрепаратов и гомеопатических средств ' +
+            '<b>не имеют педиатрических показаний</b> для данного возраста. Применение — только ' +
+            'по строгим показаниям, с учётом незрелости ферментных систем. Предпочтительны: ' +
+            'грудное вскармливание, тактильный контакт, массаж, купание, музыкотерапия ' +
+            '(пассивная), пробиотики с доказанной безопасностью для новорождённых.',
+
+        '1-3': '<b>👧 1–3 года.</b> Ограниченный перечень разрешённых фитопрепаратов. ' +
+            'Рефлексотерапия — <b>только точечный массаж</b> (не иглоукалывание). ' +
+            'Предпочтительны: закаливание, гидротерапия, функциональное питание, ' +
+            'пробиотики, музыкотерапия, сенсорная стимуляция.',
+
+        '3-7': '<b>🧒 3–7 лет.</b> Расширение спектра допустимых методов. Возможны: ' +
+            'адаптированные фитосборы, комплексные гомеопатические препараты (низкие и ' +
+            'средние потенции), арт-терапия, дансинг-терапия, анималотерапия, ЛФК, ' +
+            'закаливание, дыхательные практики.',
+
+        '7-12': '<b>👦 7–12 лет.</b> Полный спектр безмедикаментозных методов с учётом ' +
+            'индивидуальных показаний. Возможны: БОС-тренинги, нейрофидбек, корпоральная ' +
+            'рефлексотерапия, кинезитерапия, психотерапия (КПТ, майндфулнесс), нутрицевтики.',
+
+        '12-15': '<b>🧑 12–15 лет.</b> Подростковый возраст: акцент на <b>мотивацию и ' +
+            'приверженность</b>. Эффективны: стресс-менеджмент, дыхательные техники, БОС, ' +
+            'коррекция пищевого поведения, физическая активность, психотерапия. ' +
+            'Внимание: вейпинг, экранная зависимость, нарушения сна.',
+
+        '15-18': '<b>🧑‍🎓 15–18 лет.</b> Пациент способен к осознанному участию в лечении. ' +
+            'Акцент на <b>самоконтроль, обучение, партнёрскую модель</b>. Все методы ' +
+            'применимы с учётом нозологии. Контроль off-label назначений. ' +
+            'Внимание: допинг-контроль у спортсменов.'
+    };
+
+    if (ageNotes[age]) {
+        html += '<div class="block-grey"><h4>👶 Возрастные особенности</h4>' +
+            '<p>' + ageNotes[age] + '</p></div>';
+    }
+
+    document.getElementById('results-content').innerHTML = html;
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('form-section').style.display = 'none';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function goBack() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('form-section').style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+
+</body>
+</html>
